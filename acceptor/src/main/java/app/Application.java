@@ -6,8 +6,11 @@ import java.net.ServerSocket;
 import java.net.Socket;
 import java.util.HashSet;
 
+import org.json.simple.parser.ParseException;
+
 import app.implementations.AcceptorImpl;
 import app.interfaces.Acceptor;
+import app.utils.HostsFileParser;
 import app.utils.Message;
 
 public class Application {
@@ -15,11 +18,12 @@ public class Application {
 	private static final int TIMEOUT = 100;
 	private static final int PORT = 1234;
 
-	public static void main(String[] args) throws IOException, ClassNotFoundException {
+	public static void main(String[] args) throws IOException, ClassNotFoundException, ParseException {
 		
-		HashSet<String> nodes = new HashSet<String>();
+		HashSet<String> learners = HostsFileParser.parse("hosts.json", "learners");
+		//System.out.println(args[0]);
 
-		Acceptor acceptor = new AcceptorImpl("acceptor", nodes);
+		Acceptor acceptor = new AcceptorImpl("acceptor", learners);
 		ServerSocket server = new ServerSocket(PORT);
 
 		while (true) {
