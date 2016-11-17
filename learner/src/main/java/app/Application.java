@@ -6,8 +6,11 @@ import java.net.ServerSocket;
 import java.net.Socket;
 import java.net.SocketTimeoutException;
 
+import org.json.simple.parser.ParseException;
+
 import app.implementations.LearnerImpl;
 import app.interfaces.Learner;
+import app.utils.HostsFileParser;
 import app.utils.Message;
 
 public class Application {
@@ -15,8 +18,15 @@ public class Application {
 	private static final int TIMEOUT = 100;
 	private static final int PORT = 1234;
 
-	public static void main(String[] args) throws IOException, ClassNotFoundException {
-		Learner learner = new LearnerImpl(3);
+	public static void main(String[] args) throws IOException, ClassNotFoundException, ParseException {
+		
+		System.out.println(args[0]);
+		
+		int acceptorsNumber = HostsFileParser.parse("hosts.json", "acceptors").size();
+		int quorumSize = (int) Math.floor(acceptorsNumber / 2) + 1;
+		
+		Learner learner = new LearnerImpl(quorumSize);
+		@SuppressWarnings("resource")
 		ServerSocket server = new ServerSocket(PORT);
 		while(true) {		
 			try {

@@ -35,7 +35,6 @@
 					<descriptorRefs>
 						<descriptorRef>jar-with-dependencies</descriptorRef>
 					</descriptorRefs>
-					<outputDirectory>/src/docker</outputDirectory>
 				</configuration>
 			</plugin>
 

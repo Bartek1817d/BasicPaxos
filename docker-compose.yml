@@ -1,0 +1,111 @@
+version: '2'
+
+services:
+ proposer1:
+  build: proposer/
+  command: java -jar proposer-0.0.1-SNAPSHOT-jar-with-dependencies.jar proposer1
+  links:
+   - acceptor1
+   - acceptor2
+   - acceptor3
+   - acceptor4
+  depends_on:
+   - acceptor1
+   - acceptor2
+   - acceptor3
+   - acceptor4
+  networks:
+   app_net:
+    ipv4_address: 172.16.237.10
+
+proposer2:
+  build: proposer/
+  command: java -jar proposer-0.0.1-SNAPSHOT-jar-with-dependencies.jar proposer2
+  links:
+   - acceptor1
+   - acceptor2
+   - acceptor3
+   - acceptor4
+  depends_on:
+   - acceptor1
+   - acceptor2
+   - acceptor3
+   - acceptor4
+  networks:
+   app_net:
+    ipv4_address: 172.16.237.11
+
+ acceptor1:
+  build: acceptor/
+  command: java -jar acceptor-0.0.1-SNAPSHOT-jar-with-dependencies.jar acceptor1
+  links:
+   - learner1
+   - learner2
+  depends_on:
+   - learner1
+   - learner2
+  networks:
+   app_net:
+    ipv4_address: 172.16.237.12
+
+ acceptor2:
+  build: acceptor/
+  command: java -jar acceptor-0.0.1-SNAPSHOT-jar-with-dependencies.jar acceptor2
+  links:
+   - learner1
+   - learner2
+  depends_on:
+   - learner1
+   - learner2
+  networks:
+   app_net:
+    ipv4_address: 172.16.237.13
+
+ acceptor3:
+  build: acceptor/
+  command: java -jar acceptor-0.0.1-SNAPSHOT-jar-with-dependencies.jar acceptor3
+  links:
+   - learner1
+   - learner2
+  depends_on:
+   - learner1
+   - learner2
+  networks:
+   app_net:
+    ipv4_address: 172.16.237.14
+
+ acceptor4:
+  build: acceptor/
+  command: java -jar acceptor-0.0.1-SNAPSHOT-jar-with-dependencies.jar acceptor4
+  links:
+   - learner1
+   - learner2
+  depends_on:
+   - learner1
+   - learner2
+  networks:
+   app_net:
+    ipv4_address: 172.16.237.15
+
+ learner1:
+  build: learner/
+  command: java -jar learner-0.0.1-SNAPSHOT-jar-with-dependencies.jar learner1
+  networks:
+   app_net:
+    ipv4_address: 172.16.237.16
+
+ learner2:
+  build: learner/
+  command: java -jar learner-0.0.1-SNAPSHOT-jar-with-dependencies.jar learner2
+  networks:
+   app_net:
+    ipv4_address: 172.16.237.17
+ 
+networks:
+ app_net:
+  driver: bridge
+  ipam:
+   driver: default
+   config:
+    - subnet: 172.16.237.0/24
+      gateway: 172.16.237.1

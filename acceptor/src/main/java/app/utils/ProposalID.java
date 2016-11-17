@@ -1,6 +1,9 @@
 package app.utils;
 
-public class ProposalID {
+import java.io.Serializable;
+
+@SuppressWarnings("serial")
+public class ProposalID implements Serializable{
 
 	private int number;
 	private final String uid;

@@ -1,6 +1,9 @@
 package app.utils;
 
-public class Message {
+import java.io.Serializable;
+
+@SuppressWarnings("serial")
+public class Message implements Serializable{
 	private String type = null;
 	private String nodeUID = null;
 	private ProposalID proposalID = null;

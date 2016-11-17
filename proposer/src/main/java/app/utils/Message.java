@@ -1,11 +1,14 @@
 package app.utils;
 
-public class Message {
+import java.io.Serializable;
+
+@SuppressWarnings("serial")
+public class Message implements Serializable{
 	private String type = null;
 	private String nodeUID = null;
 	private ProposalID proposalID = null;
-	private ProposalID prevAcceptedID = null;
-	private Object prevAcceptedValue = null;
+	private ProposalID acceptedID = null;
+	private Object acceptedValue = null;
 	
 	public String getType() {
 		return type;
@@ -25,17 +28,17 @@ public class Message {
 	public void setProposalID(ProposalID proposalID) {
 		this.proposalID = proposalID;
 	}
-	public ProposalID getPrevAcceptedID() {
-		return prevAcceptedID;
+	public ProposalID getAcceptedID() {
+		return acceptedID;
 	}
-	public void setPrevAcceptedID(ProposalID prevAcceptedID) {
-		this.prevAcceptedID = prevAcceptedID;
+	public void setAcceptedID(ProposalID acceptedID) {
+		this.acceptedID = acceptedID;
 	}
-	public Object getPrevAcceptedValue() {
-		return prevAcceptedValue;
+	public Object getAcceptedValue() {
+		return acceptedValue;
 	}
-	public void setPrevAcceptedValue(Object prevAcceptedValue) {
-		this.prevAcceptedValue = prevAcceptedValue;
+	public void setAcceptedValue(Object acceptedValue) {
+		this.acceptedValue = acceptedValue;
 	}
 	
 	

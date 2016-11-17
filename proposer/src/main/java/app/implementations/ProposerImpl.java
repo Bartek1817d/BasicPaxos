@@ -7,6 +7,7 @@ import java.net.InetSocketAddress;
 import java.net.Socket;
 import java.net.SocketTimeoutException;
 import java.util.HashSet;
+import java.util.concurrent.TimeUnit;
 
 import app.interfaces.Proposer;
 import app.utils.Message;
@@ -45,11 +46,17 @@ public class ProposerImpl implements Proposer {
 		proposalID.incrementNumber();
 
 		Socket socket = new Socket();
+		try {
+			TimeUnit.SECONDS.sleep(10);
+		} catch (InterruptedException e1) {
+			// TODO Auto-generated catch block
+			e1.printStackTrace();
+		}
 
 		for (String acceptorUID : acceptorsUIDs) {
 			try {
-				socket.connect(new InetSocketAddress(acceptorUID, PORT), TIMEOUT);
-				socket.setSoTimeout(TIMEOUT);
+				socket.connect(new InetSocketAddress(acceptorUID, PORT));
+				//socket.setSoTimeout(TIMEOUT);
 
 				// sending prepare message
 				Message message = new Message();
@@ -62,6 +69,7 @@ public class ProposerImpl implements Proposer {
 				out.close();
 
 				// receiving promise message
+				System.out.println("ok");
 				ObjectInputStream in = new ObjectInputStream(socket.getInputStream());
 				Message promise = (Message) in.readObject();
 				if (promise.getProposalID().equals(proposalID) && promise.getType() == "promise")
@@ -95,15 +103,15 @@ public class ProposerImpl implements Proposer {
 
 		for (Message promise : promisesReceived) {
 			try {
-				socket.connect(new InetSocketAddress(promise.getNodeUID(), PORT), TIMEOUT);
-				socket.setSoTimeout(TIMEOUT);
+				socket.connect(new InetSocketAddress(promise.getNodeUID(), PORT));
+				//socket.setSoTimeout(TIMEOUT);
 
 				// sending accept request message
 				Message message = new Message();
 				message.setType("accept request");
 				message.setNodeUID(proposerUID);
 				message.setProposalID(proposalID);
-				message.setPrevAcceptedValue(proposedValue);
+				message.setAcceptedValue(proposedValue);
 
 				ObjectOutputStream out = new ObjectOutputStream(socket.getOutputStream());
 				out.writeObject(message);
@@ -125,11 +133,11 @@ public class ProposerImpl implements Proposer {
 	private void chooseValue() {
 		for (Message promise : promisesReceived) {
 
-			if (lastAcceptedID == null || promise.getPrevAcceptedID().isGreaterThan(lastAcceptedID)) {
-				lastAcceptedID = promise.getPrevAcceptedID();
+			if (lastAcceptedID == null || promise.getAcceptedID().isGreaterThan(lastAcceptedID)) {
+				lastAcceptedID = promise.getAcceptedID();
 
-				if (promise.getPrevAcceptedValue() != null)
-					proposedValue = promise.getPrevAcceptedValue();
+				if (promise.getAcceptedValue() != null)
+					proposedValue = promise.getAcceptedValue();
 			}
 		}
 	}

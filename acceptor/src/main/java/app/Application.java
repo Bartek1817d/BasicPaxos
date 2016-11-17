@@ -21,14 +21,14 @@ public class Application {
 	public static void main(String[] args) throws IOException, ClassNotFoundException, ParseException {
 		
 		HashSet<String> learners = HostsFileParser.parse("hosts.json", "learners");
-		//System.out.println(args[0]);
 
-		Acceptor acceptor = new AcceptorImpl("acceptor", learners);
+		Acceptor acceptor = new AcceptorImpl(args[0], learners);
+		
+		@SuppressWarnings("resource")
 		ServerSocket server = new ServerSocket(PORT);
-
 		while (true) {
 			Socket socket = server.accept();
-			socket.setSoTimeout(TIMEOUT);
+			//socket.setSoTimeout(TIMEOUT);
 			ObjectInputStream in = new ObjectInputStream(socket.getInputStream());
 			Message message = (Message) in.readObject();
 			if (message.getType() == "prepare")
