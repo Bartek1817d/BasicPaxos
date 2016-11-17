@@ -57,6 +57,7 @@ public class AcceptorImpl implements Acceptor {
 			message.setAcceptedValue(acceptedValue);
 			Socket socket = new Socket();
 			for (String learnerUID : learnerUIDs) {
+				
 				socket.connect(new InetSocketAddress(learnerUID, PORT));
 				ObjectOutputStream out = new ObjectOutputStream(socket.getOutputStream());
 				out.writeObject(message);

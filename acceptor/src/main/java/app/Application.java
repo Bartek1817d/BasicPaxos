@@ -31,11 +31,16 @@ public class Application {
 			//socket.setSoTimeout(TIMEOUT);
 			ObjectInputStream in = new ObjectInputStream(socket.getInputStream());
 			Message message = (Message) in.readObject();
-			if (message.getType() == "prepare")
+			System.out.println(args[0] + " otrzymał wiadomość od " + message.getNodeUID());
+			if (message.getType().equals("prepare")) {
+				System.out.println("Wiadomość typu prepare");
 				acceptor.receivePrepare(message.getNodeUID(), message.getProposalID(), socket);
-			else if (message.getType() == "accept request")
+			}
+			else if (message.getType().equals("accept request")) {
+				System.out.println("Wiadomość typu accept request");
 				acceptor.receiveAcceptRequest(message.getNodeUID(), message.getProposalID(),
 						message.getAcceptedValue());
+			}
 		}
 	}
 

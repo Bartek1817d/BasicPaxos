@@ -44,19 +44,13 @@ public class ProposerImpl implements Proposer {
 		promisesReceived.clear();
 
 		proposalID.incrementNumber();
-
-		Socket socket = new Socket();
-		try {
-			TimeUnit.SECONDS.sleep(10);
-		} catch (InterruptedException e1) {
-			// TODO Auto-generated catch block
-			e1.printStackTrace();
-		}
-
+		
+		//Socket socket = new Socket();
 		for (String acceptorUID : acceptorsUIDs) {
 			try {
-				socket.connect(new InetSocketAddress(acceptorUID, PORT));
+				//socket.connect(new InetSocketAddress(acceptorUID, PORT));
 				//socket.setSoTimeout(TIMEOUT);
+				Socket socket = new Socket(acceptorUID, PORT);
 
 				// sending prepare message
 				Message message = new Message();
@@ -64,24 +58,23 @@ public class ProposerImpl implements Proposer {
 				message.setNodeUID(proposerUID);
 				message.setProposalID(proposalID);
 
+				System.out.println(proposerUID + " wysyła wiadomość prepare do " + acceptorUID);
 				ObjectOutputStream out = new ObjectOutputStream(socket.getOutputStream());
 				out.writeObject(message);
-				out.close();
-
+				
 				// receiving promise message
-				System.out.println("ok");
+				System.out.println(proposerUID + " otrzymuje wiadomość promise od " + acceptorUID);
 				ObjectInputStream in = new ObjectInputStream(socket.getInputStream());
 				Message promise = (Message) in.readObject();
-				if (promise.getProposalID().equals(proposalID) && promise.getType() == "promise")
+				if (promise.getProposalID().equals(proposalID) && promise.getType().equals("promise"))
 					promisesReceived.add(promise);
 
-				in.close();
 				socket.close();
 			} catch (SocketTimeoutException exception) {
 				System.err.println("Lost connection with acceptor " + acceptorUID);
 			} catch (IOException e) {
 				e.printStackTrace();
-				acceptorsUIDs.remove(acceptorUID);
+				//acceptorsUIDs.remove(acceptorUID);
 			} catch (ClassNotFoundException e) {
 				e.printStackTrace();
 			} finally {
@@ -99,10 +92,13 @@ public class ProposerImpl implements Proposer {
 		if (promisesReceived.size() < quorumSize)
 			return;
 
-		Socket socket = new Socket();
+		
+		
+		System.out.println("Otrzymane obietnice: " + promisesReceived.size());
 
 		for (Message promise : promisesReceived) {
 			try {
+				Socket socket = new Socket();
 				socket.connect(new InetSocketAddress(promise.getNodeUID(), PORT));
 				//socket.setSoTimeout(TIMEOUT);
 
@@ -113,18 +109,15 @@ public class ProposerImpl implements Proposer {
 				message.setProposalID(proposalID);
 				message.setAcceptedValue(proposedValue);
 
+				System.out.println(proposerUID + " wysyła wiadomość accept request do " + promise.getNodeUID());
 				ObjectOutputStream out = new ObjectOutputStream(socket.getOutputStream());
 				out.writeObject(message);
-				out.close();
 				socket.close();
 			} catch (SocketTimeoutException exception) {
 				System.err.println("Lost connection with acceptor " + promise.getNodeUID());
 			} catch (IOException e) {
 				e.printStackTrace();
-			} finally {
-				if (promisesReceived.size() == quorumSize)
-					break;
-			}
+			} 
 
 		}
 

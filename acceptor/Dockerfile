@@ -2,4 +2,4 @@ FROM openjdk:8
 WORKDIR /home
 ADD target/acceptor-0.0.1-SNAPSHOT-jar-with-dependencies.jar .
 ADD src/main/resources/hosts.json .
-ENTRYPOINT ["java", "-jar", "acceptor-0.0.1-SNAPSHOT-jar-with-dependencies.jar"]
+CMD ["java", "-jar", "acceptor-0.0.1-SNAPSHOT-jar-with-dependencies.jar"]

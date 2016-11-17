@@ -20,8 +20,6 @@ public class Application {
 
 	public static void main(String[] args) throws IOException, ClassNotFoundException, ParseException {
 		
-		System.out.println(args[0]);
-		
 		int acceptorsNumber = HostsFileParser.parse("hosts.json", "acceptors").size();
 		int quorumSize = (int) Math.floor(acceptorsNumber / 2) + 1;
 		
@@ -34,7 +32,7 @@ public class Application {
 				socket.setSoTimeout(TIMEOUT);
 				ObjectInputStream in = new ObjectInputStream(socket.getInputStream());
 				Message message = (Message) in.readObject();
-				if(message.getType() != "accepted") {
+				if(!message.getType().equals("accepted")) {
 					in.close();
 					socket.close();
 					continue;					

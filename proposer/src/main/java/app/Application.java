@@ -16,9 +16,9 @@ public class Application {
 		HashSet<String> acceptorsUIDs = HostsFileParser.parse("hosts.json", "acceptors");
 		int quorumSize = (int) Math.floor(acceptorsUIDs.size() / 2) + 1;
 		Proposer proposer = new ProposerImpl(args[0], acceptorsUIDs, quorumSize);
-		proposer.setProposal(10);
+		proposer.setProposal(args[1]);
 		proposer.prepare();
 		proposer.acceptRequest();
 	}
-
 }
+
