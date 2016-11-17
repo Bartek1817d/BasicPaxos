@@ -1,6 +1,6 @@
 package app.interfaces;
 
-import app.implementations.ProposalID;
+import app.utils.ProposalID;
 
 public interface Learner {
 

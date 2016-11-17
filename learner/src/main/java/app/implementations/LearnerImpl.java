@@ -3,7 +3,7 @@ package app.implementations;
 import java.util.HashMap;
 
 import app.interfaces.Learner;
-import app.interfaces.Messenger;
+import app.utils.ProposalID;
 
 public class LearnerImpl implements Learner {
 
@@ -19,15 +19,13 @@ public class LearnerImpl implements Learner {
 		}
 	}
 
-	private final Messenger messenger;
 	private final int quorumSize;
 	private HashMap<ProposalID, Proposal> proposals = new HashMap<ProposalID, Proposal>();
 	private HashMap<String, ProposalID> acceptors = new HashMap<String, ProposalID>();
 	private Object finalValue = null;
 	private ProposalID finalProposalID = null;
 
-	public LearnerImpl(Messenger messenger, int quorumSize) {
-		this.messenger = messenger;
+	public LearnerImpl(int quorumSize) {
 		this.quorumSize = quorumSize;
 	}
 
@@ -70,7 +68,7 @@ public class LearnerImpl implements Learner {
 			proposals.clear();
 			acceptors.clear();
 
-			messenger.onResolution(proposalID, acceptedValue);
+			System.out.println("Final value = " + finalValue);
 		}
 	}
 

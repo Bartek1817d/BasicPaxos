@@ -1,9 +1,12 @@
 package app.interfaces;
 
-import app.implementations.ProposalID;
+import java.io.IOException;
+import java.net.Socket;
+
+import app.utils.ProposalID;
 
 public interface Acceptor {
-	public void receivePrepare(String fromUID, ProposalID proposalID);
+	public void receivePrepare(String fromUID, ProposalID proposalID, Socket socket) throws IOException;
 
-	public void receiveAcceptRequest(String fromUID, ProposalID proposalID, Object value);
+	public void receiveAcceptRequest(String fromUID, ProposalID proposalID, Object value) throws IOException;
 }

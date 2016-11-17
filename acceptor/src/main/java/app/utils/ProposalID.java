@@ -1,4 +1,4 @@
-package app.implementations;
+package app.utils;
 
 public class ProposalID {
 
