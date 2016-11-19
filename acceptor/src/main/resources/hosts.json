@@ -1,8 +1,12 @@
 {"proposers": [
-	"proposer1"],
+	"proposer1",
+	"proposer2"],
 "acceptors": [
 	"acceptor1",
-	"acceptor2"],
+	"acceptor2",
+	"acceptor3",
+	"acceptor4"],
 "learners": [
-	"learner1"]
+	"learner1",
+	"learner2"]
 }

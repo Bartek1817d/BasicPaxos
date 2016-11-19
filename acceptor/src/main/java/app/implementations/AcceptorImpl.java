@@ -38,6 +38,7 @@ public class AcceptorImpl implements Acceptor {
 			message.setAcceptedID(acceptedID);
 			message.setAcceptedValue(acceptedValue);
 			ObjectOutputStream out = new ObjectOutputStream(socket.getOutputStream());
+			System.out.println(acceptorUID + " wysyła wiadomość typu " + message.getType() + " do " + fromUID);
 			out.writeObject(message);
 			out.close();
 		}
@@ -55,13 +56,12 @@ public class AcceptorImpl implements Acceptor {
 			message.setNodeUID(acceptorUID);
 			message.setAcceptedID(acceptedID);
 			message.setAcceptedValue(acceptedValue);
-			Socket socket = new Socket();
 			for (String learnerUID : learnerUIDs) {
-				
+				Socket socket = new Socket();
 				socket.connect(new InetSocketAddress(learnerUID, PORT));
 				ObjectOutputStream out = new ObjectOutputStream(socket.getOutputStream());
+				System.out.println(acceptorUID + " wysyła wiadomość typu " + message.getType() + " do " + fromUID);
 				out.writeObject(message);
-				out.close();
 				socket.close();
 			}
 		}

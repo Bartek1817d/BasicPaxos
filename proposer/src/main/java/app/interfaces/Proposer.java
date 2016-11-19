@@ -4,7 +4,7 @@ public interface Proposer {
 
 	public void setProposal(Object value);
 
-	public void prepare();
+	public boolean prepare();
 	
 	public void acceptRequest();
 

@@ -4,38 +4,38 @@ services:
  proposer1:
   build: proposer/
   container_name: proposer1
-  command: java -jar proposer-0.0.1-SNAPSHOT-jar-with-dependencies.jar proposer1 10
+  command: java -jar proposer-0.0.1-SNAPSHOT-jar-with-dependencies.jar proposer1 1
   links:
    - acceptor1
    - acceptor2
-#   - acceptor3
-#   - acceptor4
+   - acceptor3
+   - acceptor4
   depends_on:
    - acceptor1
    - acceptor2
-#   - acceptor3
-#   - acceptor4
+   - acceptor3
+   - acceptor4
   networks:
    app_net:
     ipv4_address: 172.16.237.10
 
-# proposer2:
-#  build: proposer/
-#  container_name: proposer2
-#  command: java -jar proposer-0.0.1-SNAPSHOT-jar-with-dependencies.jar proposer1 20
-#  links:
-#   - acceptor1
-#   - acceptor2
-#   - acceptor3
-#   - acceptor4
-#  depends_on:
-#   - acceptor1
-#   - acceptor2
-#   - acceptor3
-#   - acceptor4
-#  networks:
-#   app_net:
-#    ipv4_address: 172.16.237.11
+ proposer2:
+  build: proposer/
+  container_name: proposer2
+  command: java -jar proposer-0.0.1-SNAPSHOT-jar-with-dependencies.jar proposer2 2
+  links:
+   - acceptor1
+   - acceptor2
+   - acceptor3
+   - acceptor4
+  depends_on:
+   - acceptor1
+   - acceptor2
+   - acceptor3
+   - acceptor4
+  networks:
+   app_net:
+    ipv4_address: 172.16.237.11
 
  acceptor1:
   build: acceptor/
@@ -65,33 +65,33 @@ services:
    app_net:
     ipv4_address: 172.16.237.13
 
-# acceptor3:
-#  build: acceptor/
-#  container_name: acceptor3
-#  command: java -jar acceptor-0.0.1-SNAPSHOT-jar-with-dependencies.jar acceptor3
-#  links:
-#   - learner1
-#   - learner2
-#  depends_on:
-#   - learner1
-#   - learner2
-#  networks:
-#   app_net:
-#    ipv4_address: 172.16.237.14
-
-# acceptor4:
-#  build: acceptor/
-#  container_name: acceptor4
-#  command: java -jar acceptor-0.0.1-SNAPSHOT-jar-with-dependencies.jar acceptor4
-#  links:
-#   - learner1
-#   - learner2
-#  depends_on:
-#   - learner1
-#   - learner2
-#  networks:
-#   app_net:
-#    ipv4_address: 172.16.237.15
+ acceptor3:
+  build: acceptor/
+  container_name: acceptor3
+  command: java -jar acceptor-0.0.1-SNAPSHOT-jar-with-dependencies.jar acceptor3
+  links:
+   - learner1
+   - learner2
+  depends_on:
+   - learner1
+   - learner2
+  networks:
+   app_net:
+    ipv4_address: 172.16.237.14
+ 
+ acceptor4:
+  build: acceptor/
+  container_name: acceptor4
+  command: java -jar acceptor-0.0.1-SNAPSHOT-jar-with-dependencies.jar acceptor4
+  links:
+   - learner1
+   - learner2
+  depends_on:
+   - learner1
+   - learner2
+  networks:
+   app_net:
+    ipv4_address: 172.16.237.15
  
  learner1:
   build: learner/
@@ -101,13 +101,13 @@ services:
    app_net:
     ipv4_address: 172.16.237.16
 
-# learner2:
-#  build: learner/
-#  container_name: learner2
-#  command: java -jar learner-0.0.1-SNAPSHOT-jar-with-dependencies.jar learner2
-#  networks:
-#   app_net:
-#    ipv4_address: 172.16.237.17
+ learner2:
+  build: learner/
+  container_name: learner2
+  command: java -jar learner-0.0.1-SNAPSHOT-jar-with-dependencies.jar learner2
+  networks:
+   app_net:
+    ipv4_address: 172.16.237.17
 
 networks:
  app_net:

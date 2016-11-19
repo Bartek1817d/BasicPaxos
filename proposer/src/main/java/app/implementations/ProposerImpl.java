@@ -6,7 +6,10 @@ import java.io.ObjectOutputStream;
 import java.net.InetSocketAddress;
 import java.net.Socket;
 import java.net.SocketTimeoutException;
+import java.util.Collections;
 import java.util.HashSet;
+import java.util.LinkedList;
+import java.util.List;
 import java.util.concurrent.TimeUnit;
 
 import app.interfaces.Proposer;
@@ -17,7 +20,7 @@ public class ProposerImpl implements Proposer {
 
 	private String proposerUID;
 	private final int quorumSize;
-	private static final int TIMEOUT = 100;
+	private static final int TIMEOUT = 500;
 	private static final int PORT = 1234;
 
 	private ProposalID proposalID;
@@ -40,41 +43,46 @@ public class ProposerImpl implements Proposer {
 	}
 
 	@Override
-	public void prepare() {
+	public boolean prepare() {
 		promisesReceived.clear();
 
 		proposalID.incrementNumber();
-		
-		//Socket socket = new Socket();
-		for (String acceptorUID : acceptorsUIDs) {
+		List<String> shuffledList = new LinkedList<String>(acceptorsUIDs);
+		Collections.shuffle(shuffledList);
+		// Socket socket = new Socket();
+		for (String acceptorUID : shuffledList) {
 			try {
-				//socket.connect(new InetSocketAddress(acceptorUID, PORT));
-				//socket.setSoTimeout(TIMEOUT);
+				// socket.connect(new InetSocketAddress(acceptorUID, PORT));
+				// 
 				Socket socket = new Socket(acceptorUID, PORT);
-
+				socket.setSoTimeout(TIMEOUT);
+				
 				// sending prepare message
 				Message message = new Message();
 				message.setType("prepare");
 				message.setNodeUID(proposerUID);
 				message.setProposalID(proposalID);
 
-				System.out.println(proposerUID + " wysyła wiadomość prepare do " + acceptorUID);
-				ObjectOutputStream out = new ObjectOutputStream(socket.getOutputStream());
-				out.writeObject(message);
 				
+				ObjectOutputStream out = new ObjectOutputStream(socket.getOutputStream());
+				System.out.println(proposerUID + " wysyła wiadomość prepare do " + acceptorUID);
+				out.writeObject(message);
+
 				// receiving promise message
-				System.out.println(proposerUID + " otrzymuje wiadomość promise od " + acceptorUID);
+				
 				ObjectInputStream in = new ObjectInputStream(socket.getInputStream());
 				Message promise = (Message) in.readObject();
-				if (promise.getProposalID().equals(proposalID) && promise.getType().equals("promise"))
+				if (promise.getProposalID().equals(proposalID) && promise.getType().equals("promise")) {
+					System.out.println(proposerUID + " otrzymał wiadomość promise od " + acceptorUID);
 					promisesReceived.add(promise);
+				}
 
 				socket.close();
 			} catch (SocketTimeoutException exception) {
-				System.err.println("Lost connection with acceptor " + acceptorUID);
+				System.err.println(proposerUID + " nie otrzymał wiadomości promise od " + acceptorUID);
 			} catch (IOException e) {
 				e.printStackTrace();
-				//acceptorsUIDs.remove(acceptorUID);
+				// acceptorsUIDs.remove(acceptorUID);
 			} catch (ClassNotFoundException e) {
 				e.printStackTrace();
 			} finally {
@@ -84,6 +92,11 @@ public class ProposerImpl implements Proposer {
 		}
 
 		chooseValue();
+
+		if (promisesReceived.size() < quorumSize)
+			return false;
+		else
+			return true;
 	}
 
 	@Override
@@ -92,15 +105,13 @@ public class ProposerImpl implements Proposer {
 		if (promisesReceived.size() < quorumSize)
 			return;
 
-		
-		
-		System.out.println("Otrzymane obietnice: " + promisesReceived.size());
+		System.out.println(proposerUID + " otrzymał " + promisesReceived.size() + " obietnic");
 
 		for (Message promise : promisesReceived) {
 			try {
 				Socket socket = new Socket();
 				socket.connect(new InetSocketAddress(promise.getNodeUID(), PORT));
-				//socket.setSoTimeout(TIMEOUT);
+				// socket.setSoTimeout(TIMEOUT);
 
 				// sending accept request message
 				Message message = new Message();
@@ -117,7 +128,7 @@ public class ProposerImpl implements Proposer {
 				System.err.println("Lost connection with acceptor " + promise.getNodeUID());
 			} catch (IOException e) {
 				e.printStackTrace();
-			} 
+			}
 
 		}
 
@@ -126,13 +137,16 @@ public class ProposerImpl implements Proposer {
 	private void chooseValue() {
 		for (Message promise : promisesReceived) {
 
-			if (lastAcceptedID == null || promise.getAcceptedID().isGreaterThan(lastAcceptedID)) {
+			if (lastAcceptedID == null || (promise.getAcceptedID() != null && promise.getAcceptedID().isGreaterThan(lastAcceptedID))) {
 				lastAcceptedID = promise.getAcceptedID();
 
 				if (promise.getAcceptedValue() != null)
 					proposedValue = promise.getAcceptedValue();
 			}
 		}
+		
+		if(lastAcceptedID == null)
+			lastAcceptedID = proposalID;
 	}
 
 	public String getProposerUID() {

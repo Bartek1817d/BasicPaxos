@@ -3,6 +3,7 @@ package app;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.HashSet;
+import java.util.concurrent.TimeUnit;
 
 import org.json.simple.parser.ParseException;
 
@@ -12,12 +13,13 @@ import app.utils.HostsFileParser;
 
 public class Application {
 
-	public static void main(String[] args) throws FileNotFoundException, IOException, ParseException {
+	public static void main(String[] args) throws FileNotFoundException, IOException, ParseException, InterruptedException {
 		HashSet<String> acceptorsUIDs = HostsFileParser.parse("hosts.json", "acceptors");
 		int quorumSize = (int) Math.floor(acceptorsUIDs.size() / 2) + 1;
 		Proposer proposer = new ProposerImpl(args[0], acceptorsUIDs, quorumSize);
+		
 		proposer.setProposal(args[1]);
-		proposer.prepare();
+		if(!proposer.prepare()) return;
 		proposer.acceptRequest();
 	}
 }
