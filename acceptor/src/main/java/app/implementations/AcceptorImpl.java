@@ -1,33 +1,30 @@
 package app.implementations;
 
 import java.io.IOException;
-import java.io.ObjectOutputStream;
-import java.net.InetSocketAddress;
-import java.net.Socket;
 import java.util.HashSet;
 
 import app.interfaces.Acceptor;
+import app.interfaces.Messenger;
 import app.utils.Message;
 import app.utils.ProposalID;
 
 public class AcceptorImpl implements Acceptor {
-
-	private static final int TIMEOUT = 100;
-	private static final int PORT = 1234;
 
 	private ProposalID promisedID;
 	private ProposalID acceptedID;
 	private Object acceptedValue;
 	private String acceptorUID;
 	private HashSet<String> learnerUIDs;
+	private Messenger messenger;
 
-	public AcceptorImpl(String acceptorUID, HashSet<String> learnerUIDs) {
+	public AcceptorImpl(String acceptorUID, HashSet<String> learnerUIDs, Messenger messenger) {
 		this.acceptorUID = acceptorUID;
 		this.learnerUIDs = learnerUIDs;
+		this.messenger = messenger;
 	}
 
 	@Override
-	public void receivePrepare(String fromUID, ProposalID proposalID, Socket socket) throws IOException {
+	public void receivePrepare(String fromUID, ProposalID proposalID) throws IOException {
 
 		if (this.promisedID == null || proposalID.isGreaterThan(promisedID)) {
 			promisedID = proposalID;
@@ -37,10 +34,7 @@ public class AcceptorImpl implements Acceptor {
 			message.setProposalID(proposalID);
 			message.setAcceptedID(acceptedID);
 			message.setAcceptedValue(acceptedValue);
-			ObjectOutputStream out = new ObjectOutputStream(socket.getOutputStream());
-			System.out.println(acceptorUID + " wysyła wiadomość typu " + message.getType() + " do " + fromUID);
-			out.writeObject(message);
-			out.close();
+			messenger.respond(fromUID, message);
 		}
 	}
 
@@ -57,12 +51,7 @@ public class AcceptorImpl implements Acceptor {
 			message.setAcceptedID(acceptedID);
 			message.setAcceptedValue(acceptedValue);
 			for (String learnerUID : learnerUIDs) {
-				Socket socket = new Socket();
-				socket.connect(new InetSocketAddress(learnerUID, PORT));
-				ObjectOutputStream out = new ObjectOutputStream(socket.getOutputStream());
-				System.out.println(acceptorUID + " wysyła wiadomość typu " + message.getType() + " do " + fromUID);
-				out.writeObject(message);
-				socket.close();
+				messenger.send(learnerUID, message);
 			}
 		}
 	}
@@ -79,5 +68,5 @@ public class AcceptorImpl implements Acceptor {
 	public Object getAcceptedValue() {
 		return acceptedValue;
 	}
-
+	
 }
