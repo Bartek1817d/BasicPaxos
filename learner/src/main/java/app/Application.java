@@ -29,6 +29,13 @@ public class Application {
 			if (message.getType().equals("accepted")) {
 				System.out.println(args[0] + " otrzymał wiadomość typu accepted od " + message.getNodeUID());
 				learner.receiveAccepted(message.getNodeUID(), message.getAcceptedID(), message.getAcceptedValue());
+				messenger.close();
+			} else if(message.getType().equals("read")) {
+				System.out.println(args[0] + " otrzymał wiadomość typu read");
+				Message reply = new Message();
+				reply.setType("reply");
+				reply.setAcceptedValue(learner.get((String)message.getAcceptedValue()));
+				messenger.respond("gfd", reply);
 			}
 		}
 	}

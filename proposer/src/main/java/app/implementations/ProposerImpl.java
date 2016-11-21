@@ -1,8 +1,6 @@
 package app.implementations;
 
 import java.io.IOException;
-import java.net.SocketTimeoutException;
-import java.net.UnknownHostException;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.LinkedList;
@@ -35,8 +33,7 @@ public class ProposerImpl implements Proposer {
 
 	@Override
 	public void setProposal(Object value) {
-		if (proposedValue == null)
-			proposedValue = value;
+		proposedValue = value;
 	}
 
 	@Override
@@ -67,10 +64,8 @@ public class ProposerImpl implements Proposer {
 				if (promisesReceived.size() >= quorumSize)
 					break;
 
-			} catch (SocketTimeoutException exception) {
-				System.err.println(proposerUID + " nie otrzymał wiadomości  od " + acceptorUID);
-			} catch (UnknownHostException exception) {
-				System.err.println(acceptorUID + " jest niekatywny");
+			} catch (IOException exception) {
+				System.err.println(acceptorUID + " jest nieaktywny");
 			}
 		}
 
@@ -98,7 +93,7 @@ public class ProposerImpl implements Proposer {
 			try {
 				System.out.println(proposerUID + " wysyła wiadomość accept request do " + promise.getNodeUID());
 				messenger.send(promise.getNodeUID(), message);
-			} catch (UnknownHostException exception) {
+			} catch (IOException exception) {
 				System.err.println(promise.getNodeUID() + " jest niekatywny");
 				return false;
 			}
@@ -109,7 +104,6 @@ public class ProposerImpl implements Proposer {
 
 	public Object chooseValue() {
 		for (Message promise : promisesReceived) {
-
 			if (promise.getAcceptedID() != null
 					&& (lastAcceptedID == null || promise.getAcceptedID().isGreaterThan(lastAcceptedID))) {
 				lastAcceptedID = promise.getAcceptedID();

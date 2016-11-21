@@ -23,6 +23,6 @@ public interface Messenger {
 
 	public void setTimeout(int timeout);
 
-	public void close() throws IOException;
+	
 
 }

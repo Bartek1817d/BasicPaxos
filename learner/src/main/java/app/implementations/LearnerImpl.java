@@ -1,6 +1,8 @@
 package app.implementations;
 
+import java.util.AbstractMap;
 import java.util.HashMap;
+import java.util.Map;
 
 import app.interfaces.Learner;
 import app.utils.ProposalID;
@@ -22,6 +24,7 @@ public class LearnerImpl implements Learner {
 	private final int quorumSize;
 	private HashMap<ProposalID, Proposal> proposals = new HashMap<ProposalID, Proposal>();
 	private HashMap<String, ProposalID> acceptors = new HashMap<String, ProposalID>();
+	private HashMap<String, String> storage = new HashMap<String, String>();
 	private Object finalValue = null;
 	private ProposalID finalProposalID = null;
 
@@ -30,15 +33,7 @@ public class LearnerImpl implements Learner {
 	}
 
 	@Override
-	public boolean isComplete() {
-		return finalValue != null;
-	}
-
-	@Override
 	public void receiveAccepted(String fromUID, ProposalID proposalID, Object acceptedValue) {
-
-		if (isComplete())
-			return;
 
 		ProposalID oldPID = acceptors.get(fromUID);
 
@@ -63,13 +58,22 @@ public class LearnerImpl implements Learner {
 		thisProposal.retentionCount += 1;
 
 		if (thisProposal.acceptCount == quorumSize) {
+						
 			finalProposalID = proposalID;
 			finalValue = acceptedValue;
 			proposals.clear();
 			acceptors.clear();
 
-			System.out.println("Final value = " + finalValue);
+			@SuppressWarnings("unchecked")
+			Map.Entry<String, String> entry = (AbstractMap.SimpleEntry<String, String>) finalValue;
+			storage.put(entry.getKey(), entry.getValue());
+			System.out.println(entry.getKey() + " = " + entry.getValue());
 		}
+	}
+	
+	@Override
+	public String get(String key) {
+		return storage.get(key);
 	}
 
 	public int getQuorumSize() {

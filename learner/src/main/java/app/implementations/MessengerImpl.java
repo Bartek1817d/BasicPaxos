@@ -3,6 +3,7 @@ package app.implementations;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
+import java.net.InetSocketAddress;
 import java.net.ServerSocket;
 import java.net.Socket;
 import java.net.UnknownHostException;
@@ -28,8 +29,12 @@ public class MessengerImpl implements Messenger {
 		socket = server.accept();
 		ObjectInputStream in = new ObjectInputStream(socket.getInputStream());
 		Message message = (Message) in.readObject();
-		socket.close();
+		//socket.close();
 		return message;
+	}
+	
+	public void close() throws IOException {
+		socket.close();
 	}
 
 	@Override
@@ -41,7 +46,8 @@ public class MessengerImpl implements Messenger {
 
 	@Override
 	public void send(String destination, Message message) throws UnknownHostException, IOException {
-		socket = new Socket(destination, port);
+		socket = new Socket();
+		socket.connect(new InetSocketAddress(destination, port), timeout);
 		ObjectOutputStream out = new ObjectOutputStream(socket.getOutputStream());
 		out.writeObject(message);
 		socket.close();
@@ -51,7 +57,8 @@ public class MessengerImpl implements Messenger {
 	public Message sendReceive(String destination, Message message)
 			throws UnknownHostException, IOException, ClassNotFoundException {
 
-		socket = new Socket(destination, port);
+		socket = new Socket();
+		socket.connect(new InetSocketAddress(destination, port), timeout);
 		socket.setSoTimeout(timeout);
 
 		ObjectOutputStream out = new ObjectOutputStream(socket.getOutputStream());

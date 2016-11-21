@@ -34,7 +34,11 @@ public class AcceptorImpl implements Acceptor {
 			message.setProposalID(proposalID);
 			message.setAcceptedID(acceptedID);
 			message.setAcceptedValue(acceptedValue);
-			messenger.respond(fromUID, message);
+			try {
+				messenger.respond(fromUID, message);
+			} catch (IOException e) {
+				System.err.println(fromUID + " jest nieaktywny");
+			}
 		}
 	}
 
@@ -51,11 +55,16 @@ public class AcceptorImpl implements Acceptor {
 			message.setAcceptedID(acceptedID);
 			message.setAcceptedValue(acceptedValue);
 			for (String learnerUID : learnerUIDs) {
+				try {
 				messenger.send(learnerUID, message);
+				} catch(IOException e) {
+					System.err.println(learnerUID + " jest nieaktywny");
+				}
 			}
+
+			acceptedValue = null;
 		}
 	}
-
 
 	public ProposalID getPromisedID() {
 		return promisedID;
@@ -68,5 +77,5 @@ public class AcceptorImpl implements Acceptor {
 	public Object getAcceptedValue() {
 		return acceptedValue;
 	}
-	
+
 }

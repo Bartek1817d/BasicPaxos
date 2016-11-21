@@ -24,23 +24,21 @@ public class MessengerImpl implements Messenger {
 		server = new ServerSocket(port);
 	}
 
-	@Override
 	public Message receive() throws IOException, ClassNotFoundException {
 		socket = server.accept();
+		socket.setSoTimeout(timeout);
 		ObjectInputStream in = new ObjectInputStream(socket.getInputStream());
 		Message message = (Message) in.readObject();
 		socket.close();
 		return message;
 	}
 
-	@Override
 	public void respond(String destination, Message message) throws UnknownHostException, IOException {
 		ObjectOutputStream out = new ObjectOutputStream(socket.getOutputStream());
 		out.writeObject(message);
 		socket.close();
 	}
 
-	@Override
 	public void send(String destination, Message message) throws UnknownHostException, IOException {
 		
 		socket = new Socket();
@@ -52,7 +50,6 @@ public class MessengerImpl implements Messenger {
 		socket.close();
 	}
 	
-	@Override
 	public Message sendReceive(String destination, Message message)
 			throws UnknownHostException, IOException, ClassNotFoundException {
 
