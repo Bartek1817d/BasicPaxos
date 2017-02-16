@@ -1,7 +1,7 @@
 package app.implementations;
 
 import java.io.IOException;
-import java.util.HashSet;
+import java.util.Set;
 
 import app.interfaces.Acceptor;
 import app.interfaces.Messenger;
@@ -14,10 +14,10 @@ public class AcceptorImpl implements Acceptor {
 	private ProposalID acceptedID;
 	private Object acceptedValue;
 	private String acceptorUID;
-	private HashSet<String> learnerUIDs;
+	private Set<String> learnerUIDs;
 	private Messenger messenger;
 
-	public AcceptorImpl(String acceptorUID, HashSet<String> learnerUIDs, Messenger messenger) {
+	public AcceptorImpl(String acceptorUID, Set<String> learnerUIDs, Messenger messenger) {
 		this.acceptorUID = acceptorUID;
 		this.learnerUIDs = learnerUIDs;
 		this.messenger = messenger;

@@ -60,7 +60,7 @@ public class LearnerImpl implements Learner {
 		if (thisProposal.acceptCount == quorumSize) {
 						
 			finalProposalID = proposalID;
-			finalValue = acceptedValue;
+			finalValue = thisProposal.value;
 			proposals.clear();
 			acceptors.clear();
 

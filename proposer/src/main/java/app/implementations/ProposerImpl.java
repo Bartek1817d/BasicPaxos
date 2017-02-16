@@ -5,6 +5,7 @@ import java.util.Collections;
 import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Set;
 
 import app.interfaces.Messenger;
 import app.interfaces.Proposer;
@@ -20,10 +21,10 @@ public class ProposerImpl implements Proposer {
 	private ProposalID proposalID;
 	private Object proposedValue = null;
 	private ProposalID lastAcceptedID = null;
-	private HashSet<String> acceptorsUIDs;
-	private HashSet<Message> promisesReceived = new HashSet<Message>();
+	private Set<String> acceptorsUIDs;
+	private Set<Message> promisesReceived = new HashSet<Message>();
 
-	public ProposerImpl(String proposerUID, HashSet<String> acceptorsUIDs, int quorumSize, Messenger messenger) {
+	public ProposerImpl(String proposerUID, Set<String> acceptorsUIDs, int quorumSize, Messenger messenger) {
 		this.proposerUID = proposerUID;
 		this.acceptorsUIDs = acceptorsUIDs;
 		this.quorumSize = quorumSize;

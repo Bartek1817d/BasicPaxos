@@ -2,6 +2,7 @@ package app;
 
 import java.io.IOException;
 import java.util.HashSet;
+import java.util.Set;
 
 import org.json.simple.parser.ParseException;
 
@@ -19,7 +20,7 @@ public class Application {
 
 	public static void main(String[] args) throws IOException, ClassNotFoundException, ParseException {
 
-		HashSet<String> learners = HostsFileParser.parse("hosts.json", "learners");
+		Set<String> learners = HostsFileParser.parse("hosts.json", "learners");
 
 		Messenger messenger = new MessengerImpl(PORT, TIMEOUT);
 		Acceptor acceptor = new AcceptorImpl(args[0], learners, messenger);
